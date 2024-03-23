@@ -1,0 +1,407 @@
+{
+  "status": "000",
+  "message": "정상",
+  "page_no": 1,
+  "page_count": 100,
+  "total_count": 35,
+  "total_page": 1,
+  "list": [
+    {
+      "corp_code": "00578538",
+      "corp_name": "티피씨글로벌",
+      "stock_code": "130740",
+      "corp_cls": "K",
+      "report_nm": "[기재정정]주요사항보고서(타법인주식및출자증권양도결정)",
+      "rcept_no": "20240322001073",
+      "flr_nm": "티피씨글로벌",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00123718",
+      "corp_name": "부광약품",
+      "stock_code": "003000",
+      "corp_cls": "Y",
+      "report_nm": "주요사항보고서(타법인주식및출자증권양수결정)",
+      "rcept_no": "20240322001052",
+      "flr_nm": "부광약품",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00971090",
+      "corp_name": "어스앤에어로스페이스",
+      "stock_code": "263540",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(유상증자결정)",
+      "rcept_no": "20240322001065",
+      "flr_nm": "어스앤에어로스페이스",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "01182550",
+      "corp_name": "EDGC",
+      "stock_code": "245620",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(전환사채권발행결정)",
+      "rcept_no": "20240322001055",
+      "flr_nm": "EDGC",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00971090",
+      "corp_name": "어스앤에어로스페이스",
+      "stock_code": "263540",
+      "corp_cls": "K",
+      "report_nm": "[기재정정]주요사항보고서(유상증자결정)",
+      "rcept_no": "20240322000998",
+      "flr_nm": "어스앤에어로스페이스",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00552859",
+      "corp_name": "HLB테라퓨틱스",
+      "stock_code": "115450",
+      "corp_cls": "K",
+      "report_nm": "[기재정정]주요사항보고서(유상증자결정)",
+      "rcept_no": "20240322001051",
+      "flr_nm": "HLB테라퓨틱스",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "01214044",
+      "corp_name": "빗썸코리아",
+      "stock_code": "",
+      "corp_cls": "E",
+      "report_nm": "주요사항보고서(회사분할결정)",
+      "rcept_no": "20240322001066",
+      "flr_nm": "빗썸코리아",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "01118643",
+      "corp_name": "로보쓰리에이아이앤로보틱스",
+      "stock_code": "238500",
+      "corp_cls": "N",
+      "report_nm": "[기재정정]주요사항보고서(유상증자결정)",
+      "rcept_no": "20240322000987",
+      "flr_nm": "로보쓰리에이아이앤로보틱스",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00492894",
+      "corp_name": "젬백스",
+      "stock_code": "082270",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(신주인수권부사채권발행결정)",
+      "rcept_no": "20240322000964",
+      "flr_nm": "젬백스",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00141404",
+      "corp_name": "영풍제지",
+      "stock_code": "006740",
+      "corp_cls": "Y",
+      "report_nm": "주요사항보고서(유상증자결정)",
+      "rcept_no": "20240322000937",
+      "flr_nm": "영풍제지",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00989664",
+      "corp_name": "코아스템켐온",
+      "stock_code": "166480",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(자기주식처분결정)",
+      "rcept_no": "20240322000894",
+      "flr_nm": "코아스템켐온",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00989664",
+      "corp_name": "코아스템켐온",
+      "stock_code": "166480",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(교환사채권발행결정)",
+      "rcept_no": "20240322000887",
+      "flr_nm": "코아스템켐온",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00367482",
+      "corp_name": "라이트론",
+      "stock_code": "069540",
+      "corp_cls": "K",
+      "report_nm": "[기재정정]주요사항보고서(전환사채권발행결정)",
+      "rcept_no": "20240322000867",
+      "flr_nm": "라이트론",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00560849",
+      "corp_name": "에스앤디",
+      "stock_code": "260970",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(자기주식취득결정)",
+      "rcept_no": "20240322000830",
+      "flr_nm": "에스앤디",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00367482",
+      "corp_name": "라이트론",
+      "stock_code": "069540",
+      "corp_cls": "K",
+      "report_nm": "[기재정정]주요사항보고서(타법인주식및출자증권양수결정)",
+      "rcept_no": "20240322000795",
+      "flr_nm": "라이트론",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00919966",
+      "corp_name": "신라젠",
+      "stock_code": "215600",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(유상증자결정)",
+      "rcept_no": "20240322000735",
+      "flr_nm": "신라젠",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00327396",
+      "corp_name": "옵트론텍",
+      "stock_code": "082210",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(유형자산양도결정)",
+      "rcept_no": "20240322000682",
+      "flr_nm": "옵트론텍",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00523936",
+      "corp_name": "HB솔루션",
+      "stock_code": "297890",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(유형자산양수결정)",
+      "rcept_no": "20240322000713",
+      "flr_nm": "HB솔루션",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00670085",
+      "corp_name": "엘아이에스",
+      "stock_code": "138690",
+      "corp_cls": "E",
+      "report_nm": "[첨부정정]주요사항보고서(회사합병결정)",
+      "rcept_no": "20240322000727",
+      "flr_nm": "엘아이에스",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00860332",
+      "corp_name": "메리츠금융지주",
+      "stock_code": "138040",
+      "corp_cls": "Y",
+      "report_nm": "주요사항보고서(자기주식취득신탁계약체결결정)",
+      "rcept_no": "20240322000660",
+      "flr_nm": "메리츠금융지주",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00670085",
+      "corp_name": "엘아이에스",
+      "stock_code": "138690",
+      "corp_cls": "E",
+      "report_nm": "[기재정정]주요사항보고서(회사합병결정)",
+      "rcept_no": "20240322000648",
+      "flr_nm": "엘아이에스",
+      "rcept_dt": "20240322",
+      "rm": "정"
+    },
+    {
+      "corp_code": "00857392",
+      "corp_name": "케이비국민카드",
+      "stock_code": "",
+      "corp_cls": "E",
+      "report_nm": "주요사항보고서(자본으로인정되는채무증권발행결정)",
+      "rcept_no": "20240322000636",
+      "flr_nm": "케이비국민카드",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "01208821",
+      "corp_name": "팡스카이",
+      "stock_code": "",
+      "corp_cls": "E",
+      "report_nm": "주요사항보고서(전환사채권발행결정)",
+      "rcept_no": "20240322000632",
+      "flr_nm": "팡스카이",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00365624",
+      "corp_name": "아이윈",
+      "stock_code": "090150",
+      "corp_cls": "K",
+      "report_nm": "[연장결정]주요사항보고서(자기주식취득신탁계약체결결정)",
+      "rcept_no": "20240322000489",
+      "flr_nm": "아이윈",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00165060",
+      "corp_name": "하이록코리아",
+      "stock_code": "013030",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(자기주식취득신탁계약체결결정)",
+      "rcept_no": "20240322000467",
+      "flr_nm": "하이록코리아",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00552859",
+      "corp_name": "HLB테라퓨틱스",
+      "stock_code": "115450",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(전환사채권발행결정)",
+      "rcept_no": "20240322000398",
+      "flr_nm": "HLB테라퓨틱스",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00552859",
+      "corp_name": "HLB테라퓨틱스",
+      "stock_code": "115450",
+      "corp_cls": "K",
+      "report_nm": "주요사항보고서(유상증자결정)",
+      "rcept_no": "20240322000353",
+      "flr_nm": "HLB테라퓨틱스",
+      "rcept_dt": "20240322",
+      "rm": "정"
+    },
+    {
+      "corp_code": "01070149",
+      "corp_name": "올리패스",
+      "stock_code": "244460",
+      "corp_cls": "K",
+      "report_nm": "[기재정정]주요사항보고서(전환사채권발행결정)",
+      "rcept_no": "20240322000371",
+      "flr_nm": "올리패스",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "01207761",
+      "corp_name": "에이치앤비디자인",
+      "stock_code": "227100",
+      "corp_cls": "K",
+      "report_nm": "[기재정정]주요사항보고서(전환사채권발행결정)",
+      "rcept_no": "20240322000330",
+      "flr_nm": "에이치앤비디자인",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00765897",
+      "corp_name": "한국피아이엠",
+      "stock_code": "448900",
+      "corp_cls": "N",
+      "report_nm": "[기재정정]주요사항보고서(유상증자결정)",
+      "rcept_no": "20240322000276",
+      "flr_nm": "한국피아이엠",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "01208821",
+      "corp_name": "팡스카이",
+      "stock_code": "",
+      "corp_cls": "E",
+      "report_nm": "[기재정정]주요사항보고서(유상증자결정)",
+      "rcept_no": "20240322000263",
+      "flr_nm": "팡스카이",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00159810",
+      "corp_name": "카프로",
+      "stock_code": "006380",
+      "corp_cls": "Y",
+      "report_nm": "[기재정정]주요사항보고서(전환사채권발행결정)",
+      "rcept_no": "20240322000224",
+      "flr_nm": "카프로",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "00536286",
+      "corp_name": "윈팩",
+      "stock_code": "097800",
+      "corp_cls": "K",
+      "report_nm": "[첨부정정]주요사항보고서(유상증자결정)",
+      "rcept_no": "20240322000011",
+      "flr_nm": "윈팩",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "01353024",
+      "corp_name": "TS트릴리온",
+      "stock_code": "317240",
+      "corp_cls": "K",
+      "report_nm": "[기재정정]주요사항보고서(유상증자결정)",
+      "rcept_no": "20240321002011",
+      "flr_nm": "TS트릴리온",
+      "rcept_dt": "20240322",
+      "rm": ""
+    },
+    {
+      "corp_code": "01070149",
+      "corp_name": "올리패스",
+      "stock_code": "244460",
+      "corp_cls": "K",
+      "report_nm": "[기재정정]주요사항보고서(전환사채권발행결정)",
+      "rcept_no": "20240321001988",
+      "flr_nm": "올리패스",
+      "rcept_dt": "20240322",
+      "rm": "정"
+    }
+  ]
+}
+
+/////////////
+
+rcept_no corp_cls corp_code corp_name od_a_at_t  ... eaq_estk eaq_estk_rt          aq_dd d1_prodlm_ostk d1_prodlm_estk
+0  20240322000830        K  00560849      에스앤디         2  ...        -           -  2024년 03월 22일              -              -
+0  20240321000012        K  00187415       코미팜         2  ...        -           -  2024년 03월 20일         45,423              -
+0  20240320000766        Y  00234412  신세계인터내셔날         3  ...        -           -  2024년 03월 20일        107,100              -
+0  20240320000404        Y  00593032        LF         3  ...        -           -  2024년 03월 20일         35,112              -
+0  20240320000288        Y  00115065      동남합성         2  ...        -           -  2024년 03월 20일          2,000              -
+
+
+
