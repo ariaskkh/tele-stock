@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/Users/dean/Desktop/programming/tele-stock/src')
 import requests
 
 from private_data import DART_API_KEY
