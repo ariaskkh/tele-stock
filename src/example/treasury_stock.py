@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 import FinanceDataReader as fdr
 import matplotlib.pyplot as plt
-from private_data import DART_API_KEY
+from private_data import DART_API_KEY # pylint: disable=import-error
 
 
 
