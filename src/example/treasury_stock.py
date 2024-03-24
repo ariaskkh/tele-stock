@@ -1,8 +1,9 @@
 import sys
 sys.path.append('/Users/dean/Desktop/programming/tele-stock/src')
-from private_data import DART_API_KEY
-import pandas as pd
 import requests
+import pandas as pd
+from private_data import DART_API_KEY
+
 
 ## 자기주식취득 공시 데이터 가져오기
 page_no=1
@@ -45,5 +46,64 @@ df = results_all.loc[(results_all['report_nm'] == keyword) & ((results_all['corp
 
 # rcept_no를 index로
 df=df.set_index('rcept_no')
-print(df.shape) # (행 개수, 열 개수)
-print(df)
+# print(df.shape) # (행 개수, 열 개수)
+# print(df)
+
+
+###############################################################
+
+
+## 자기주식취득 상세 데이터 가져오기
+details = pd.DataFrame()
+exec_check = [] #회사별 중복실행 방지
+for idx, row in df.iterrows():
+    # 주요사항보고서 자기주식 취득결정 상세 요청인자
+    crtfc_key = DART_API_KEY
+    corp_code = row['corp_code'] # 이것만 수정
+
+    if corp_code in exec_check:
+        continue
+
+    exec_check.append(corp_code)
+
+    url = 'https://opendart.fss.or.kr/api/tsstkAqDecsn.json'
+    params = {
+        'crtfc_key': crtfc_key,
+        'corp_code': corp_code,
+        'bgn_de': bgn_de,
+        'end_de': end_de
+    }
+
+    # 결과 데이터를 json으로 저장
+    results = requests.get(url, params=params).json()
+    results_df_details = pd.DataFrame(results['list'])
+    details = pd.concat([details, results_df_details])
+
+# 데이터 종류 확인 - https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS005&apiId=2020038
+"""
+'rcept_no': 접수번호
+'aqpln_stk_ostk' - 취득예정주식(주)(보통주식)
+'aqpln_stk_estk' - 취득예정주식(주)(기타주식)
+'aqpln_prc_ostk' - 취득예정금액(원)(보통주식)
+'aqpln_prc_estk' - 취득예정금액(원)(기타주식)
+'aqexpd_bgd' - 취득예상기간(시작일)
+'aqexpd_edd' - 취득예상기간(종료일)
+'hdexpd_bgd' - 보유예상기간(시작일)
+'hdexpd_edd' - 보유예상기간(종료일)
+'aq_wtn_div_ostk' - 취득 전 자기주식 보유현황(배당 가능 범위 내 취득)(보통주식)
+'aq_wtn_div_estk' - 취득 전 자기주식 보유현황(배당 가능 범위 내 취득)(기타주식)
+'eaq_ostk' - 취득 전 자기주식 보유현황(기타취득)(보통주식)
+'eaq_estk' - 취득 전 자기주식 보유현황(기타취득)(기타주식)
+"""
+
+details=details[['rcept_no','aqpln_stk_ostk','aqpln_stk_estk',
+     'aqpln_prc_ostk','aqpln_prc_estk','aqexpd_bgd','aqexpd_edd',
+     'hdexpd_bgd','hdexpd_edd','aq_wtn_div_ostk','aq_wtn_div_estk',
+      'eaq_ostk','eaq_estk']]
+
+details=details.set_index('rcept_no')
+
+print(details)
+
+
+###############################################################
