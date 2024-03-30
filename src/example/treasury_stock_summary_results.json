@@ -394,7 +394,7 @@
   ]
 }
 
-/////////////
+///////////// 참고 추가 데이터
 
 rcept_no corp_cls corp_code corp_name od_a_at_t  ... eaq_estk eaq_estk_rt          aq_dd d1_prodlm_ostk d1_prodlm_estk
 0  20240322000830        K  00560849      에스앤디         2  ...        -           -  2024년 03월 22일              -              -
@@ -402,6 +402,3 @@ rcept_no corp_cls corp_code corp_name od_a_at_t  ... eaq_estk eaq_estk_rt       
 0  20240320000766        Y  00234412  신세계인터내셔날         3  ...        -           -  2024년 03월 20일        107,100              -
 0  20240320000404        Y  00593032        LF         3  ...        -           -  2024년 03월 20일         35,112              -
 0  20240320000288        Y  00115065      동남합성         2  ...        -           -  2024년 03월 20일          2,000              -
-
-
-

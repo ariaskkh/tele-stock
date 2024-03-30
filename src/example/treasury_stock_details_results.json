@@ -1,0 +1,44 @@
+{
+  "status": "000",
+  "message": "정상",
+  "list": [
+    {
+      "rcept_no": "20240322000830",
+      "corp_cls": "K",
+      "corp_code": "00560849",
+      "corp_name": "에스앤디",
+      "od_a_at_t": "2",
+      "od_a_at_b": "-",
+      "adt_a_atn": "불참",
+      "aqpln_stk_ostk": "1,166,666",
+      "aqpln_stk_estk": "-",
+      "aqpln_prc_ostk": "34,999,980,000",
+      "aqpln_prc_estk": "-",
+      "aqexpd_bgd": "2024년 03월 25일",
+      "aqexpd_edd": "2024년 04월 15일",
+      "hdexpd_bgd": "-",
+      "hdexpd_edd": "-",
+      "aq_pp": "자기주식소각을 통한 \n주주가치 제고",
+      "aq_mth": "공개매수",
+      "cs_iv_bk": "미래에셋증권\n(MIRAE ASSET SECURITIES CO., LTD.)",
+      "aq_wtn_div_ostk": "-",
+      "aq_wtn_div_ostk_rt": "-",
+      "aq_wtn_div_estk": "-",
+      "aq_wtn_div_estk_rt": "-",
+      "eaq_ostk": "-",
+      "eaq_ostk_rt": "-",
+      "eaq_estk": "-",
+      "eaq_estk_rt": "-",
+      "aq_dd": "2024년 03월 22일",
+      "d1_prodlm_ostk": "-",
+      "d1_prodlm_estk": "-"
+    }
+  ]
+}
+
+// 기타 데이터
+
+// {'status': '000', 'message': '정상', 'list': [{'rcept_no': '20240321000012', 'corp_cls': 'K', 'corp_code': '00187415', 'corp_name': '코미팜', 'od_a_at_t': '2', 'od_a_at_b': '-', 'adt_a_atn': '참석', 'aqpln_stk_ostk': '241,545', 'aqpln_stk_estk': '-', 'aqpln_prc_ostk': '1,000,000,000', 'aqpln_prc_estk': '-', 'aqexpd_bgd': '2024년 03월 21일', 'aqexpd_edd': '2024년 06월 20일', 'hdexpd_bgd': '-', 'hdexpd_edd': '-', 'aq_pp': '주식가격의 안정 및 주주가치 제고', 'aq_mth': '코스닥시장을 통한 장내 직접취득', 'cs_iv_bk': '하이투자증권', 'aq_wtn_div_ostk': '409,254', 'aq_wtn_div_ostk_rt': '0.57', 'aq_wtn_div_estk': '-', 'aq_wtn_div_estk_rt': '-', 'eaq_ostk': '41,895', 'eaq_ostk_rt': '0.05', 'eaq_estk': '-', 'eaq_estk_rt': '-', 'aq_dd': '2024년 03월 20일', 'd1_prodlm_ostk': '45,423', 'd1_prodlm_estk': '-'}]}
+// {'status': '000', 'message': '정상', 'list': [{'rcept_no': '20240320000766', 'corp_cls': 'Y', 'corp_code': '00234412', 'corp_name': '신세계인터내셔날', 'od_a_at_t': '3', 'od_a_at_b': '-', 'adt_a_atn': '-', 'aqpln_stk_ostk': '1,071,000', 'aqpln_stk_estk': '-', 'aqpln_prc_ostk': '17,028,900,000', 'aqpln_prc_estk': '-', 'aqexpd_bgd': '2024년 03월 21일', 'aqexpd_edd': '2024년 06월 20일', 'hdexpd_bgd': '-', 'hdexpd_edd': '-', 'aq_pp': '주가 안정화를 통한 주주가치 제고', 'aq_mth': '장내취득', 'cs_iv_bk': '삼성증권\n(SAMSUNG SECURITIES CO., LTD)', 'aq_wtn_div_ostk': '-', 'aq_wtn_div_ostk_rt': '-', 'aq_wtn_div_estk': '-', 'aq_wtn_div_estk_rt': '-', 'eaq_ostk': '-', 'eaq_ostk_rt': '-', 'eaq_estk': '-', 'eaq_estk_rt': '-', 'aq_dd': '2024년 03월 20일', 'd1_prodlm_ostk': '107,100', 'd1_prodlm_estk': '-'}]}
+// {'status': '000', 'message': '정상', 'list': [{'rcept_no': '20240320000404', 'corp_cls': 'Y', 'corp_code': '00593032', 'corp_name': 'LF', 'od_a_at_t': '3', 'od_a_at_b': '0', 'adt_a_atn': '-', 'aqpln_stk_ostk': '351,123', 'aqpln_stk_estk': '-', 'aqpln_prc_ostk': '5,000,000,000', 'aqpln_prc_estk': '-', 'aqexpd_bgd': '2024년 03월 21일', 'aqexpd_edd': '2024년 06월 20일', 'hdexpd_bgd': '-', 'hdexpd_edd': '-', 'aq_pp': '주가 안정 및 주주가치 제고', 'aq_mth': '유가증권 시장을 통한 장내 매수', 'cs_iv_bk': 'NH투자증권', 'aq_wtn_div_ostk': '780,000', 'aq_wtn_div_ostk_rt': '2.67', 'aq_wtn_div_estk': '-', 'aq_wtn_div_estk_rt': '-', 'eaq_ostk': '0', 'eaq_ostk_rt': '0', 'eaq_estk': '-', 'eaq_estk_rt': '-', 'aq_dd': '2024년 03월 20일', 'd1_prodlm_ostk': '35,112', 'd1_prodlm_estk': '-'}]}
+// {'status': '000', 'message': '정상', 'list': [{'rcept_no': '20240320000288', 'corp_cls': 'Y', 'corp_code': '00115065', 'corp_name': '동남합성', 'od_a_at_t': '2', 'od_a_at_b': '-', 'adt_a_atn': '참석', 'aqpln_stk_ostk': '20,000', 'aqpln_stk_estk': '-', 'aqpln_prc_ostk': '574,000,000', 'aqpln_prc_estk': '-', 'aqexpd_bgd': '2024년 03월 21일', 'aqexpd_edd': '2024년 06월 20일', 'hdexpd_bgd': '-', 'hdexpd_edd': '-', 'aq_pp': '주가 안정', 'aq_mth': '유가증권시장을 통한 매수', 'cs_iv_bk': 'NH투자증권', 'aq_wtn_div_ostk': '14,100', 'aq_wtn_div_ostk_rt': '0.4', 'aq_wtn_div_estk': '-', 'aq_wtn_div_estk_rt': '-', 'eaq_ostk': '-', 'eaq_ostk_rt': '-', 'eaq_estk': '-', 'eaq_estk_rt': '-', 'aq_dd': '2024년 03월 20일', 'd1_prodlm_ostk': '2,000', 'd1_prodlm_estk': '-'}]}
