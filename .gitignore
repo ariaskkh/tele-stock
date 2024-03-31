@@ -26,3 +26,4 @@ __pycache__/
 private_data.py
 
 corp_code/
+*.xlsx

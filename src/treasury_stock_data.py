@@ -46,7 +46,6 @@ def get_treasury_stock_summary():
     # rcept_no를 index로 변경
     return df.set_index('rcept_no')
     
-
     
 # 주말일 경우 금요일 데이터 받아오게 처리
 def get_date():
@@ -55,6 +54,46 @@ def get_date():
         return (today - timedelta(1)).strftime("%Y%m%d")
     if(today.weekday() == 6):
         return (today - timedelta(2)).strftime("%Y%m%d")
-    
 
-print(get_treasury_stock_summary())
+def get_treasury_stock_details(df):
+    details_results_all = pd.DataFrame()
+    exec_check = [] # 회사별 중복 실행 방지
+    
+    for idx, row in df.iterrows():
+        corp_code = row['corp_code']
+        bgn_de = row['rcept_dt']
+        end_de = row['rcept_dt']
+
+        if corp_code in exec_check:
+            continue
+        exec_check.append(corp_code)
+
+        url = 'https://opendart.fss.or.kr/api/tsstkAqDecsn.json'
+        params = {
+            'crtfc_key': DART_API_KEY,
+            'corp_code': corp_code,
+            'bgn_de': bgn_de,
+            'end_de': end_de
+        }
+
+        details_results = requests.get(url, params=params).json()
+        details_results_df = pd.DataFrame(details_results['list'])
+        details_results_all = pd.concat([details_results_all, details_results_df])
+    """
+    추출이 필요한 데이터 열 종류 선택
+    - recept_no: 리포트 넘버
+    - aqpln_prc_ostk: 취득예정 금액
+    - aq_pp: 취득 목적
+    - aq_mth: 취득 방식
+    - aqexpd_bgd: 시작일
+    - aqexpd_edd: 종료일
+    """
+    filtered_details = details_results_all[['rcept_no', 'aqpln_prc_ostk', 'aq_pp', 'aq_mth', 'aqexpd_bgd', 'aqexpd_edd']]
+    return filtered_details.set_index('rcept_no')
+
+treasury_stock_summary = get_treasury_stock_summary()
+treasury_stock_details = get_treasury_stock_details(treasury_stock_summary)
+# axis = 1은 데이터 좌우로 병합, join = 'inner'은 교집합 병합 <-> 'outer'는 합집합 병합
+treasury_stock_data = pd.concat([treasury_stock_summary, treasury_stock_details], axis = 1, join = 'inner')
+# 엑셀 추출 필요할 경우 사용
+# treasury_stock_data.to_excel("/Users/dean/Desktop/programming/tele-stock/src/자기주식데이터.xlsx")
