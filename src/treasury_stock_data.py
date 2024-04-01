@@ -48,14 +48,13 @@ def get_treasury_stock_summary():
 
         if page_no == total_page:
             break
-
         page_no += 1
     
     keyword = '주요사항보고서(자기주식취득결정)'
     # 법인 Y(코스피), K(코스닥) // (거래정지, 비상장 회사 제외)
-    df = results_all.loc[(results_all['report_nm'] == keyword) & ((results_all['corp_cls'] == 'K') | (results_all['corp_cls'] == 'Y'))]
+    summary_results = results_all.loc[(results_all['report_nm'] == keyword) & ((results_all['corp_cls'] == 'K') | (results_all['corp_cls'] == 'Y'))]
     # rcept_no를 index로 변경
-    return df.set_index('rcept_no')
+    return summary_results.set_index('rcept_no')
     
     
 # 주말일 경우 금요일 데이터 받아오게 처리
@@ -67,6 +66,10 @@ def get_date():
         return (today - timedelta(2)).strftime("%Y%m%d")
 
 def get_treasury_stock_details(treasury_stock_summary):
+    if len(treasury_stock_summary) == 0:
+        print("자기주식취득결정 공시가 존재하지 않습니다.")
+        return None
+    
     details_results_all = pd.DataFrame()
     company_list = [] # 회사별 중복 실행 방지
     
@@ -113,6 +116,6 @@ def get_treasury_stock_details(treasury_stock_summary):
 treasury_stock_summary = get_treasury_stock_summary()
 treasury_stock_details = get_treasury_stock_details(treasury_stock_summary)
 # axis = 1은 데이터 좌우로 병합, join = 'inner'은 교집합 병합 <-> 'outer'는 합집합 병합
-treasury_stock_total_data = pd.concat([treasury_stock_summary, treasury_stock_details], axis = 1, join = 'inner')
+treasury_stock_total_data = pd.concat([treasury_stock_summary, treasury_stock_details], axis = 1, join = 'inner') if len(treasury_stock_summary) else None
 # 엑셀 추출 필요할 경우 사용
 # treasury_stock_data.to_excel("/Users/dean/Desktop/programming/tele-stock/src/자기주식데이터.xlsx")
