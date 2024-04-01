@@ -8,9 +8,9 @@ from private_data import DART_API_KEY
 def get_treasury_stock_summary():
     page_no = 1 # 페이지 번호
     page_count = 100 # 페이지 별 건수
-    bgn_de = get_date() # 검색 시작일
-    end_de = get_date() # 검색 종료일
-    pblntf_detail_ty ='B001' # 주요사항 보고서
+    start_date = get_date() # 검색 시작일
+    end_date = get_date() # 검색 종료일
+    major_info_report ='B001' # 주요사항 보고서
     
     # TODO: 데이터 프레임을 굳이 사용할 필요 없을 경우 삭제
     results_all = pd.DataFrame()
@@ -21,9 +21,9 @@ def get_treasury_stock_summary():
             'crtfc_key': DART_API_KEY,
             'page_no': str(page_no),
             'page_count': str(page_count),
-            'bgn_de': bgn_de,
-            'end_de': end_de,
-            'pblntf_detail_ty': pblntf_detail_ty
+            'bgn_de': start_date,
+            'end_de': end_date,
+            'pblntf_detail_ty': major_info_report
         }
 
         # 결과를 json 형태로 저장
@@ -55,18 +55,18 @@ def get_date():
     if(today.weekday() == 6):
         return (today - timedelta(2)).strftime("%Y%m%d")
 
-def get_treasury_stock_details(df):
+def get_treasury_stock_details(treasury_stock_summary):
     details_results_all = pd.DataFrame()
-    exec_check = [] # 회사별 중복 실행 방지
+    company_list = [] # 회사별 중복 실행 방지
     
-    for idx, row in df.iterrows():
+    for _, row in treasury_stock_summary.iterrows():
         corp_code = row['corp_code']
         bgn_de = row['rcept_dt']
         end_de = row['rcept_dt']
 
-        if corp_code in exec_check:
+        if corp_code in company_list:
             continue
-        exec_check.append(corp_code)
+        company_list.append(corp_code)
 
         url = 'https://opendart.fss.or.kr/api/tsstkAqDecsn.json'
         params = {
@@ -94,6 +94,6 @@ def get_treasury_stock_details(df):
 treasury_stock_summary = get_treasury_stock_summary()
 treasury_stock_details = get_treasury_stock_details(treasury_stock_summary)
 # axis = 1은 데이터 좌우로 병합, join = 'inner'은 교집합 병합 <-> 'outer'는 합집합 병합
-treasury_stock_data = pd.concat([treasury_stock_summary, treasury_stock_details], axis = 1, join = 'inner')
+treasury_stock_total_data = pd.concat([treasury_stock_summary, treasury_stock_details], axis = 1, join = 'inner')
 # 엑셀 추출 필요할 경우 사용
 # treasury_stock_data.to_excel("/Users/dean/Desktop/programming/tele-stock/src/자기주식데이터.xlsx")
