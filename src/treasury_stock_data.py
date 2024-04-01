@@ -4,6 +4,8 @@ import requests
 
 from private_data import DART_API_KEY
 
+DEFAULT_TIMEOUT = 5000
+
 ## 자기주식취득 공시 summary 데이터 가져오기
 def get_treasury_stock_summary():
     page_no = 1 # 페이지 번호
@@ -27,7 +29,7 @@ def get_treasury_stock_summary():
         }
 
         # 결과를 json 형태로 저장
-        results = requests.get(url, params=params).json()
+        results = requests.get(url, params=params, timeout = DEFAULT_TIMEOUT).json()
         # 결과 중 실제 공시 정보가 있는 부분만 DataFrame으로 저장
         results_df = pd.DataFrame(results['list'])
         # 하나의 DataFrame으로 만듦
@@ -76,7 +78,7 @@ def get_treasury_stock_details(treasury_stock_summary):
             'end_de': end_de
         }
 
-        details_results = requests.get(url, params=params).json()
+        details_results = requests.get(url, params = params, timeout = DEFAULT_TIMEOUT).json()
         details_results_df = pd.DataFrame(details_results['list'])
         details_results_all = pd.concat([details_results_all, details_results_df])
     """
