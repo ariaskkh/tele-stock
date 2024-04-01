@@ -28,8 +28,17 @@ def get_treasury_stock_summary():
             'pblntf_detail_ty': major_info_report
         }
 
-        # 결과를 json 형태로 저장
-        results = requests.get(url, params=params, timeout = DEFAULT_TIMEOUT).json()
+        try:
+            # 결과를 json 형태로 저장
+            results = requests.get(url, params=params, timeout = DEFAULT_TIMEOUT).json()
+        except requests.exceptions.HTTPError as e:
+            print("GET - Http Error occurred ", e)
+        except requests.exceptions.Timeout as e:
+            print("GET - Timeout error occurred ", e)
+        except requests.exceptions.RequestException as e: # 모든 exception의 기본 class
+            print("GET - Error occurred ", e)
+
+
         # 결과 중 실제 공시 정보가 있는 부분만 DataFrame으로 저장
         results_df = pd.DataFrame(results['list'])
         # 하나의 DataFrame으로 만듦
@@ -78,7 +87,15 @@ def get_treasury_stock_details(treasury_stock_summary):
             'end_de': end_de
         }
 
-        details_results = requests.get(url, params = params, timeout = DEFAULT_TIMEOUT).json()
+        try:
+            details_results = requests.get(url, params = params, timeout = DEFAULT_TIMEOUT).json()
+        except requests.exceptions.HTTPError as e:
+            print("GET - Http Error occurred ", e)
+        except requests.exceptions.Timeout as e:
+            print("GET - Timeout error occurred ", e)
+        except requests.exceptions.RequestException as e:
+            print("GET - Error occurred ", e)
+
         details_results_df = pd.DataFrame(details_results['list'])
         details_results_all = pd.concat([details_results_all, details_results_df])
     """
