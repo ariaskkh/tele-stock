@@ -16,8 +16,8 @@ class TreasuryStock:
             self.total_data = pd.concat([self.overview_data, self.detail_data], axis = 1, join = 'inner')
 
     def get_stock_data(self):
-        return self.total_data
-
+        return self.__make_tele_message()
+        
     def __get_stock_overview(self):
         page_no = 1 # 페이지 번호
         page_count = 100 # 페이지 별 건수
@@ -121,3 +121,40 @@ class TreasuryStock:
         """
         filtered_details = details_results_all[['rcept_no', 'aqpln_prc_ostk', 'aq_pp', 'aq_mth', 'aqexpd_bgd', 'aqexpd_edd']]
         return filtered_details.set_index('rcept_no')
+    
+    """ [텔레 노출 form ex]
+    휠라홀딩스(081660)
+    자식주식 <취득> 결정(신탁)
+
+    금액(원): 100 억
+    유동시총대비(%): 0.66 // 아직 없음
+    취득목적: 주식가격의 안정을 통한 주주가치 제고
+    시작일 : 2024-03-21
+    종료일 : 2024-09-20
+    http:~~~
+    """
+    def __make_tele_message(self):
+        result = []
+        for index, stock in self.total_data.iterrows():
+            result_str = ""
+            corp_name = stock['corp_name']
+            stock_code = stock['stock_code']
+            report_name = stock['report_nm']
+            expected_achieve_money = int(int(stock['aqpln_prc_ostk'].replace(',', '')) / 100000000)
+            acquisition_purpose = stock['aq_pp']
+            acquisition_method = stock['aq_mth']
+            start_date = stock['aqexpd_bgd']
+            end_date = stock['aqexpd_edd']
+            report_number = index
+
+            # 텔레 노출 form
+            result_str += f"{corp_name}({stock_code})\n"
+            result_str += f"{report_name}\n\n"
+            result_str += f"금액(원)): {expected_achieve_money} 억\n"
+            result_str += f"취득목적: {acquisition_purpose}\n"
+            result_str += f"취득방법: {acquisition_method}\n"
+            result_str += f"시작일: {start_date}\n"
+            result_str += f"종료일: {end_date}\n"
+            result_str += f"http://dart.fss.or.kr/dsaf001/main.do?rcpNo={report_number}\n"
+            result.append(result_str)
+        return result

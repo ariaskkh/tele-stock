@@ -7,7 +7,7 @@ bot = telegram.Bot(token=TOKEN_ID)
 
 async def main():
     treasury_stock = TreasuryStock()
-    print(treasury_stock.get_stock_data())
-    # await bot.send_message(chat_id=CHAT_ID, text="hello")
-
+    treasury_stock_data = treasury_stock.get_stock_data()
+    for data in treasury_stock_data:
+        await bot.send_message(chat_id = CHAT_ID, text = data)
 asyncio.run(main())
