@@ -52,7 +52,6 @@ class TreasuryStock:
             except requests.exceptions.RequestException as e: # 모든 exception의 기본 class
                 print("GET - Error occurred ", e)
 
-
             # 결과 중 실제 공시 정보가 있는 부분만 DataFrame으로 저장
             results_df = pd.DataFrame(results['list'])
             # 하나의 DataFrame으로 만듦
@@ -73,9 +72,11 @@ class TreasuryStock:
     def __get_date(self):
         today = datetime.today()
         if(today.weekday() == 5):
-            return (today - timedelta(1)).strftime("%Y%m%d")
+            today -= timedelta(1)
         if(today.weekday() == 6):
-            return (today - timedelta(2)).strftime("%Y%m%d")
+            today -= timedelta(2)
+        return today.strftime("%Y%m%d")
+        
         
     def __get_stock_details(self, treasury_stock_summary):
         if len(treasury_stock_summary) == 0:
