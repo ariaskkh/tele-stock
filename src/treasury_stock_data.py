@@ -16,7 +16,10 @@ class TreasuryStock:
             self.total_data = pd.concat([self.overview_data, self.detail_data], axis = 1, join = 'inner')
 
     def get_stock_data(self):
-        return self.__make_tele_message()
+        return self.total_data
+    
+    def get_stock_tele_messages(self):
+        return self.__get_tele_message_form()
         
     def __get_stock_overview(self):
         page_no = 1 # 페이지 번호
@@ -133,7 +136,7 @@ class TreasuryStock:
     종료일 : 2024-09-20
     http:~~~
     """
-    def __make_tele_message(self):
+    def __get_tele_message_form(self):
         result = []
         for index, stock in self.total_data.iterrows():
             result_str = ""
