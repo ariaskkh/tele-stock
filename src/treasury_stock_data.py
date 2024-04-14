@@ -6,16 +6,20 @@ from private_data import DART_API_KEY
 
 class TreasuryStock:
     DEFAULT_TIMEOUT = 5000
+    NO_DATA_STATUS = '013'
+    REQEUST_SUCCESS_MESSAGE = '정상'
 
     def __init__(self):
         self.overview_data = self.__get_stock_overview()
-        self.detail_data = self.__get_stock_details(self.overview_data)
-        if not len(self.overview_data):
+        if(self.overview_data is None or not len(self.overview_data)):
             self.total_data =  None
-        else:
-            self.total_data = pd.concat([self.overview_data, self.detail_data], axis = 1, join = 'inner')
+            return
+        self.detail_data = self.__get_stock_details(self.overview_data)
+        self.total_data = pd.concat([self.overview_data, self.detail_data], axis = 1, join = 'inner')
 
     def get_stock_data(self):
+        if(self.total_data ==0):
+            return None
         return self.total_data
     
     def get_stock_tele_messages(self):
@@ -51,6 +55,13 @@ class TreasuryStock:
                 print("GET - Timeout error occurred ", e)
             except requests.exceptions.RequestException as e: # 모든 exception의 기본 class
                 print("GET - Error occurred ", e)
+
+            if(results['status'] == self.NO_DATA_STATUS):
+                print("해당 기간에 자기주식취득결정 공시가 존재하지 않습니다.")
+                return None
+            if(results['message'] != self.REQEUST_SUCCESS_MESSAGE):
+                print("비정상적 데이터를 받았습니다. 전달 인자 등을 확인하세요", results['message'])
+                return None
 
             # 결과 중 실제 공시 정보가 있는 부분만 DataFrame으로 저장
             results_df = pd.DataFrame(results['list'])
@@ -138,6 +149,9 @@ class TreasuryStock:
     http:~~~
     """
     def __get_tele_message_form(self):
+        if (self.total_data is None):
+            print("메세지가 없습니다")
+            return None
         result = []
         for index, stock in self.total_data.iterrows():
             result_str = ""
