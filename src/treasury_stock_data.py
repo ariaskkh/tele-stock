@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import pandas as pd
 import requests
+import os
 
 from private_data import DART_API_KEY
 
@@ -8,14 +9,11 @@ class TreasuryStock:
     DEFAULT_TIMEOUT = 5000
     NO_DATA_STATUS = '013'
     REQEUST_SUCCESS_MESSAGE = '정상'
+    file_name = '자기주식데이터.xlsx'
 
     def __init__(self):
-        self.overview_data = self.__get_stock_overview()
-        if(self.overview_data is None or not len(self.overview_data)):
-            self.total_data =  None
-            return
-        self.detail_data = self.__get_stock_details(self.overview_data)
-        self.total_data = pd.concat([self.overview_data, self.detail_data], axis = 1, join = 'inner')
+        self.__get_data()
+        self.__save_data()
 
     def get_stock_data(self):
         if(self.total_data ==0):
@@ -24,6 +22,14 @@ class TreasuryStock:
     
     def get_stock_tele_messages(self):
         return self.__get_tele_message_form()
+    
+    def __get_data(self):
+        self.overview_data = self.__get_stock_overview()
+        if(self.overview_data is None or not len(self.overview_data)):
+            self.total_data =  None
+            return
+        self.detail_data = self.__get_stock_details(self.overview_data)
+        self.total_data = pd.concat([self.overview_data, self.detail_data], axis = 1, join = 'inner')
         
     def __get_stock_overview(self):
         page_no = 1 # 페이지 번호
@@ -176,3 +182,33 @@ class TreasuryStock:
             result_str += f"http://dart.fss.or.kr/dsaf001/main.do?rcpNo={report_number}\n"
             result.append(result_str)
         return result
+
+    def __save_data(self):
+        if (self.total_data is None):
+            print("저장할 데이터가 존재하지 않습니다.")
+            return
+        # 파일이 존재하지 않을 때
+        if not os.path.exists(self.file_name):
+            print(f"'{self.file_name}' 파일이 존재하지 않습니다.")
+            self.total_data.to_excel(f"/Users/dean/Desktop/programming/tele-stock/src/{self.file_name}")
+            return
+        # 파일이 존재 시
+        self.__update_data_at_excel()
+
+    def __update_data_at_excel(self):
+        total_data_saved = pd.read_excel(self.file_name).set_index('rcept_no')
+        report_number_array_saved = total_data_saved.index.values
+        for new_report_number in self.total_data.index:
+            # 파일에 새로 받은 데이터가 존재할 때
+            if int(new_report_number) in report_number_array_saved:
+                # message로 보여줄 total_data에서 데이터 제거
+                self.total_data = self.total_data.drop([new_report_number])
+                continue
+            # 파일에 새로 받은 데이터가 존재하지 않을 때 total_data_saved에 데이터 추가
+            new_report_data = self.total_data.loc[new_report_number]
+            total_data_saved.loc[new_report_number] = new_report_data
+        # 엑셀로 저장
+        if (self.total_data.empty):
+            print("이미 저장된 데이터입니다.")
+            return
+        total_data_saved.to_excel(f"/Users/dean/Desktop/programming/tele-stock/src/{self.file_name}")
