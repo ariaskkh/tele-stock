@@ -89,9 +89,9 @@ class TreasuryStock:
     def __get_date(self):
         today = datetime.today()
         if(today.weekday() == 5):
-            today -= timedelta(1)
+            return today - timedelta(1)
         if(today.weekday() == 6):
-            today -= timedelta(2)
+            return today - timedelta(2)
         return today.strftime("%Y%m%d")
         
         
