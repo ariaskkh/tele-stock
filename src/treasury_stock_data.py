@@ -83,8 +83,8 @@ class TreasuryStock:
         keyword = '주요사항보고서(자기주식취득결정)'
         # 법인 Y(코스피), K(코스닥) // (거래정지, 비상장 회사 제외)
         summary_results = results_all.loc[(results_all['report_nm'] == keyword) & ((results_all['corp_cls'] == 'K') | (results_all['corp_cls'] == 'Y'))]
-        # rcept_no를 index로 변경
-        return summary_results.set_index('rcept_no')
+        new_summary_results = self.__filter_saved_data(summary_results.set_index('rcept_no'))
+        return new_summary_results
     
     def __get_date(self):
         today = datetime.today()
@@ -95,15 +95,15 @@ class TreasuryStock:
         return today.strftime("%Y%m%d")
         
         
-    def __get_stock_details(self, treasury_stock_summary):
-        if len(treasury_stock_summary) == 0:
+    def __get_stock_details(self, overview_data: pd.DataFrame) -> pd.DataFrame:
+        if len(overview_data) == 0:
             print("자기주식취득결정 공시가 존재하지 않습니다.")
             return None
     
         details_results_all = pd.DataFrame()
         company_list = [] # 회사별 중복 실행 방지
     
-        for _, row in treasury_stock_summary.iterrows():
+        for _, row in overview_data.iterrows():
             corp_code = row['corp_code']
             bgn_de = row['rcept_dt']
             end_de = row['rcept_dt']
@@ -129,11 +129,11 @@ class TreasuryStock:
             except requests.exceptions.RequestException as e:
                 print("GET - Error occurred ", e)
 
-            details_results_df = pd.DataFrame(details_results['list'])
-            details_results_all = pd.concat([details_results_all, details_results_df])
+            details_results = pd.DataFrame(details_results['list'])
+            details_results_all = pd.concat([details_results_all, details_results])
         """
         추출이 필요한 데이터 열 종류 선택
-        - recept_no: 리포트 넘버
+        - recept_no: 접수 번호
         - aqpln_prc_ostk: 취득예정 금액
         - aq_pp: 취득 목적
         - aq_mth: 취득 방식
@@ -164,7 +164,8 @@ class TreasuryStock:
             corp_name = stock['corp_name']
             stock_code = stock['stock_code']
             report_name = stock['report_nm']
-            expected_achieve_money = int(int(stock['aqpln_prc_ostk'].replace(',', '')) / 100000000)
+            if (stock['aqpln_prc_ostk'] != '-'):
+                expected_achieve_money = int(int(stock['aqpln_prc_ostk'].replace(',', '')) / 100000000)
             acquisition_purpose = stock['aq_pp']
             acquisition_method = stock['aq_mth']
             start_date = stock['aqexpd_bgd']
@@ -212,3 +213,12 @@ class TreasuryStock:
             print("이미 저장된 데이터입니다.")
             return
         total_data_saved.to_excel(f"/Users/dean/Desktop/programming/tele-stock/src/{self.file_name}")
+
+    # TODO: 위 로직과 중복 로직 합칠 수 있는지 확인..
+    def __filter_saved_data(self, overview_data_received: pd.DataFrame):
+        total_data_saved = pd.read_excel(self.file_name).set_index('rcept_no')
+        report_number_array_saved = total_data_saved.index.values
+        for new_report_number in overview_data_received.index.values:
+            if new_report_number in report_number_array_saved:
+                overview_data_received = overview_data_received.drop([new_report_number])
+        return overview_data_received
