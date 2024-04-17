@@ -130,6 +130,7 @@ class TreasuryStock:
                 print("GET - Error occurred ", e)
 
             details_results = pd.DataFrame(details_results['list'])
+            self.__check_corrected_data(overview_data, row.name, details_results.loc[0, 'rcept_no'])
             details_results_all = pd.concat([details_results_all, details_results])
         """
         추출이 필요한 데이터 열 종류 선택
@@ -222,3 +223,13 @@ class TreasuryStock:
             if new_report_number in report_number_array_saved:
                 overview_data_received = overview_data_received.drop([new_report_number])
         return overview_data_received
+    
+    # 정정 공시의 경우 처음 받은 overview_recept_number와 이어 받은 detail_recept_number가 달라 예외처리. 정정된 값인 detail_recept_number로 같게 만듦.
+    # 정정 시 최초 한 번만 실행됨
+    def __check_corrected_data(self, overview_data: pd.DataFrame, overview_recept_number, detail_recept_number) -> pd.DataFrame:
+        if(overview_recept_number != detail_recept_number):
+            overview_data = overview_data.reset_index()
+            index_to_change = overview_data.index[overview_data['rcept_no'] == overview_recept_number].tolist()[0]
+            overview_data.at[index_to_change, 'rcept_no'] = detail_recept_number
+            # 바뀐 데이터 할당
+            self.overview_data = overview_data.set_index('rcept_no')
