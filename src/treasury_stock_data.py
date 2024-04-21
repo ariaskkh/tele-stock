@@ -27,8 +27,10 @@ class TreasuryStock:
         self.overview_data = self.__get_stock_overview()
         if(self.overview_data is None or not len(self.overview_data)):
             self.total_data =  None
+            print("해당 조건의 공시 데이터가 존재하지 않습니다.")
             return
         self.detail_data = self.__get_stock_details(self.overview_data)
+        # axis = 1 좌우 합치기, = 0 위아래 합치기 // inner = 교집합, outer = 합집합
         self.total_data = pd.concat([self.overview_data, self.detail_data], axis = 1, join = 'inner')
         
     def __get_stock_overview(self):
@@ -63,7 +65,7 @@ class TreasuryStock:
                 print("GET - Error occurred ", e)
 
             if(results['status'] == self.NO_DATA_STATUS):
-                print("해당 기간에 자기주식취득결정 공시가 존재하지 않습니다.")
+                print("해당 기간에 공시가 존재하지 않습니다.")
                 return None
             if(results['message'] != self.REQEUST_SUCCESS_MESSAGE):
                 print("비정상적 데이터를 받았습니다. 전달 인자 등을 확인하세요", results['message'])
@@ -89,9 +91,9 @@ class TreasuryStock:
     def __get_date(self):
         today = datetime.today()
         if(today.weekday() == 5):
-            return today - timedelta(1)
+            return (today - timedelta(1)).strftime("%Y%m%d")
         if(today.weekday() == 6):
-            return today - timedelta(2)
+            return (today - timedelta(2)).strftime("%Y%m%d")
         return today.strftime("%Y%m%d")
         
         
@@ -135,13 +137,16 @@ class TreasuryStock:
         """
         추출이 필요한 데이터 열 종류 선택
         - recept_no: 접수 번호
-        - aqpln_prc_ostk: 취득예정 금액
+        - aqpln_stk_ostk: 취득예정 주식 수(보통주식)
+        - aqpln_stk_estk: 취득예정 주식 수(기타주식)
+        - aqpln_prc_ostk: 취득예정 금액(보통주식)
+        - aqpln_prc_estk: 취득예정 금액(기타주식)
         - aq_pp: 취득 목적
         - aq_mth: 취득 방식
         - aqexpd_bgd: 시작일
         - aqexpd_edd: 종료일
         """
-        filtered_details = details_results_all[['rcept_no', 'aqpln_prc_ostk', 'aq_pp', 'aq_mth', 'aqexpd_bgd', 'aqexpd_edd']]
+        filtered_details = details_results_all[['rcept_no', 'aqpln_stk_ostk', 'aqpln_prc_ostk', 'aqpln_stk_estk', 'aqpln_prc_estk', 'aq_pp', 'aq_mth', 'aqexpd_bgd', 'aqexpd_edd']]
         return filtered_details.set_index('rcept_no')
     
     """ [텔레 노출 form ex]
@@ -153,7 +158,7 @@ class TreasuryStock:
     취득목적: 주식가격의 안정을 통한 주주가치 제고
     시작일 : 2024-03-21
     종료일 : 2024-09-20
-    http:~~~
+    http://dart.fss.or.kr/dsaf001/main.do?rcpNo=report_number
     """
     def __get_tele_message_form(self):
         if (self.total_data is None):
@@ -165,10 +170,12 @@ class TreasuryStock:
             corp_name = stock['corp_name']
             stock_code = stock['stock_code']
             report_name = stock['report_nm']
-            if (stock['aqpln_prc_ostk'] != '-'):
-                expected_achieve_money = int(int(stock['aqpln_prc_ostk'].replace(',', '')) / 100000000)
-            acquisition_purpose = stock['aq_pp']
+            if (stock['aqpln_prc_ostk'] != '-'): # 보통주식
+                expected_achieve_money = round(int(stock['aqpln_prc_ostk'].replace(',', '')) / 100000000)
+            else: # 기타주식
+                expected_achieve_money = round(int(stock['aqpln_prc_estk'].replace(',', '')) / 100000000)
             acquisition_method = stock['aq_mth']
+            acquisition_purpose = stock['aq_pp']
             start_date = stock['aqexpd_bgd']
             end_date = stock['aqexpd_edd']
             report_number = index
@@ -177,8 +184,8 @@ class TreasuryStock:
             result_str += f"{corp_name}({stock_code})\n"
             result_str += f"{report_name}\n\n"
             result_str += f"금액(원)): {expected_achieve_money} 억\n"
-            result_str += f"취득목적: {acquisition_purpose}\n"
             result_str += f"취득방법: {acquisition_method}\n"
+            result_str += f"취득목적: {acquisition_purpose}\n"
             result_str += f"시작일: {start_date}\n"
             result_str += f"종료일: {end_date}\n"
             result_str += f"http://dart.fss.or.kr/dsaf001/main.do?rcpNo={report_number}\n"
@@ -217,11 +224,13 @@ class TreasuryStock:
 
     # TODO: 위 로직과 중복 로직 합칠 수 있는지 확인..
     def __filter_saved_data(self, overview_data_received: pd.DataFrame):
-        total_data_saved = pd.read_excel(self.file_name).set_index('rcept_no')
-        report_number_array_saved = total_data_saved.index.values
-        for new_report_number in overview_data_received.index.values:
-            if new_report_number in report_number_array_saved:
-                overview_data_received = overview_data_received.drop([new_report_number])
+        if os.path.exists(self.file_name):
+            total_data_saved = pd.read_excel(self.file_name).set_index('rcept_no')
+            report_number_array_saved = total_data_saved.index.values
+            for new_report_number in overview_data_received.index.values:
+                if new_report_number in report_number_array_saved:
+                    overview_data_received = overview_data_received.drop([new_report_number])
+            return overview_data_received
         return overview_data_received
     
     # 정정 공시의 경우 처음 받은 overview_recept_number와 이어 받은 detail_recept_number가 달라 예외처리. 정정된 값인 detail_recept_number로 같게 만듦.
