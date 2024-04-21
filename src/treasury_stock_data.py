@@ -4,6 +4,13 @@ import requests
 import os
 
 from private_data import DART_API_KEY
+from enum import Enum
+
+class BusinessReportKind(Enum):
+    FIRST_QUARTER = "11013" # 분기보고서
+    SECOND_QUARTER = "11012" # 반기보고서
+    THIRD_QUARTER = "11014" # 분기보고서
+    FOURTH_QUARTER = "11011" # 사업보고서
 
 class TreasuryStock:
     DEFAULT_TIMEOUT = 5000
@@ -32,7 +39,9 @@ class TreasuryStock:
         self.detail_data = self.__get_stock_details(self.overview_data)
         # axis = 1 좌우 합치기, = 0 위아래 합치기 // inner = 교집합, outer = 합집합
         self.total_data = pd.concat([self.overview_data, self.detail_data], axis = 1, join = 'inner')
-        
+        self.floating_stock_data = self.__get_floating_stock_rate(self.overview_data)
+        self.__add_floating_stock_rate()
+
     def __get_stock_overview(self):
         page_no = 1 # 페이지 번호
         page_count = 100 # 페이지 별 건수
@@ -149,12 +158,31 @@ class TreasuryStock:
         filtered_details = details_results_all[['rcept_no', 'aqpln_stk_ostk', 'aqpln_prc_ostk', 'aqpln_stk_estk', 'aqpln_prc_estk', 'aq_pp', 'aq_mth', 'aqexpd_bgd', 'aqexpd_edd']]
         return filtered_details.set_index('rcept_no')
     
+    def __add_floating_stock_rate(self):
+        total_data = self.total_data.reset_index()
+        total_data['acquisition_stock_rate_of_floating'] = None # column 추가
+        for _, total_data_of_company in total_data.iterrows():
+            for _, floating_data_of_company in self.floating_stock_data.iterrows():
+                if total_data_of_company['corp_code'] == floating_data_of_company['corp_code']:
+                    # 유동주식 비율 구해야 함 = 취득 주식 수  / 유통주식 수
+                    acquisition_stock_number = 0
+                    if total_data_of_company['aqpln_stk_ostk'] == '-':
+                        acquisition_stock_number = total_data_of_company['aqpln_stk_estk'] # 기타주식
+                    else:
+                        acquisition_stock_number = total_data_of_company['aqpln_stk_ostk'] # 보통주식
+                    acquisition_stock_number = int(acquisition_stock_number.replace(',',''))
+                    floating_stock_number = int(floating_data_of_company['hold_stock_co'].replace(',',''))
+                    acquisition_stock_rate_of_floating = round(acquisition_stock_number / floating_stock_number * 100, 2)
+                    total_data.loc[total_data['corp_code'] == floating_data_of_company['corp_code'], 'acquisition_stock_rate_of_floating'] = acquisition_stock_rate_of_floating
+        self.total_data = total_data.set_index('rcept_no')
+    
     """ [텔레 노출 form ex]
     휠라홀딩스(081660)
     자식주식 <취득> 결정(신탁)
 
     금액(원): 100 억
-    유동시총대비(%): 0.66 // 아직 없음
+    유동주식대비(소액주주 기준): 0.66 %
+    취득방법: 유가증권시장을 통한 장내 매수
     취득목적: 주식가격의 안정을 통한 주주가치 제고
     시작일 : 2024-03-21
     종료일 : 2024-09-20
@@ -174,6 +202,7 @@ class TreasuryStock:
                 expected_achieve_money = round(int(stock['aqpln_prc_ostk'].replace(',', '')) / 100000000)
             else: # 기타주식
                 expected_achieve_money = round(int(stock['aqpln_prc_estk'].replace(',', '')) / 100000000)
+            acquisition_stock_rate_of_floating = stock['acquisition_stock_rate_of_floating']
             acquisition_method = stock['aq_mth']
             acquisition_purpose = stock['aq_pp']
             start_date = stock['aqexpd_bgd']
@@ -184,6 +213,7 @@ class TreasuryStock:
             result_str += f"{corp_name}({stock_code})\n"
             result_str += f"{report_name}\n\n"
             result_str += f"금액(원)): {expected_achieve_money} 억\n"
+            result_str += f"유동주식수대비(소액주주 기준): {acquisition_stock_rate_of_floating} %\n"
             result_str += f"취득방법: {acquisition_method}\n"
             result_str += f"취득목적: {acquisition_purpose}\n"
             result_str += f"시작일: {start_date}\n"
@@ -242,3 +272,73 @@ class TreasuryStock:
             overview_data.at[index_to_change, 'rcept_no'] = detail_recept_number
             # 바뀐 데이터 할당
             self.overview_data = overview_data.set_index('rcept_no')
+
+    def __get_floating_stock_rate(self, overview_data):
+        latest_report_code_list = self.__get_latest_report_code()
+        floating_stock_data_all = pd.DataFrame()
+        
+        for _, company_overview_data in overview_data.iterrows():
+
+            url = "https://opendart.fss.or.kr/api/mrhlSttus.json"
+            params =  {
+                'crtfc_key': DART_API_KEY,
+                'corp_code': company_overview_data['corp_code'],
+                'bsns_year': self.get_latest_report_business_year(latest_report_code_list[0]), # 사업 연도
+                'reprt_code': latest_report_code_list[0].value, # 보고서 코드 
+            }
+
+            try:
+                floating_stock_data = requests.get(url, params = params, timeout = self.DEFAULT_TIMEOUT).json()
+            except requests.exceptions.HTTPError as e:
+                print("GET - Http Error occurred ", e)
+            except requests.exceptions.Timeout as e:
+                print("GET - Timeout error occurred ", e)
+            except requests.exceptions.RequestException as e:
+                print("GET - Error occurred ", e)
+
+        
+            # TODO: 3, 6, 9, 12월에 해당 데이터 없을 경우 예외처리
+
+            floating_stock_data = pd.DataFrame(floating_stock_data['list'])
+            # print("floating_stock_data", floating_stock_data[['hold_stock_co']])
+            
+            floating_stock_data_all = pd.concat([floating_stock_data_all, floating_stock_data])
+        """
+        - corp_code: 고유번호
+        - corp_name: 법인명
+        - se: 구분 (ex. 소액주주)
+        - hold_stock_co: 보유 주식 수
+        - stock_tot_co: 총발행 주식수
+        - hold_stock_rate: 보유 주식 비율
+        """
+        return floating_stock_data_all[['rcept_no', 'corp_code', 'corp_name', 'se', 'hold_stock_co','hold_stock_rate']]
+
+
+    # 정기 보고서의 종류를 결정하기 위한 함수
+    def __get_latest_report_code(self) -> list:
+        report_code = []
+        month = datetime.now().month
+        if month <= 3:
+            if month == 3:
+                report_code.append(BusinessReportKind.FOURTH_QUARTER)
+            report_code.append(BusinessReportKind.THIRD_QUARTER)
+        elif month <= 6:
+            if month == 6:
+                report_code.append(BusinessReportKind.FIRST_QUARTER)
+            report_code.append(BusinessReportKind.FOURTH_QUARTER)
+        elif month <= 9:
+            if month == 9:
+                report_code.append(BusinessReportKind.SECOND_QUARTER)
+            report_code.append(BusinessReportKind.FIRST_QUARTER)
+        else:
+            if month == 12:
+                report_code.append(BusinessReportKind.THIRD_QUARTER)
+            report_code.append(BusinessReportKind.SECOND_QUARTER)
+        return report_code
+    
+    def get_latest_report_business_year(self, report_code) -> int:
+        month = datetime.now().month
+        if month < 6 or (month == 6 and report_code == BusinessReportKind.FOURTH_QUARTER):
+            return datetime.now().year - 1
+        else:
+            return datetime.now().year
