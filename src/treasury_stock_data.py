@@ -212,7 +212,10 @@ class TreasuryStock:
             # 텔레 노출 form
             result_str += f"{corp_name}({stock_code})\n"
             result_str += f"{report_name}\n\n"
-            result_str += f"금액(원)): {expected_achieve_money} 억\n"
+            if (stock['aqpln_prc_ostk'] != '-'):
+                result_str += f"금액(원)): {expected_achieve_money} 억 (보통주식)\n"
+            else:
+                result_str += f"금액(원)): {expected_achieve_money} 억 (기타주식)\n"
             result_str += f"유동주식수대비(소액주주 기준): {acquisition_stock_rate_of_floating} %\n"
             result_str += f"취득방법: {acquisition_method}\n"
             result_str += f"취득목적: {acquisition_purpose}\n"
@@ -314,6 +317,7 @@ class TreasuryStock:
         return floating_stock_data_all[['rcept_no', 'corp_code', 'corp_name', 'se', 'hold_stock_co','hold_stock_rate']]
 
 
+    # TODO: 리팩토링
     # 정기 보고서의 종류를 결정하기 위한 함수
     def __get_latest_report_code(self) -> list:
         report_code = []
