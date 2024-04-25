@@ -12,10 +12,12 @@ class BusinessReportKind(Enum):
     THIRD_QUARTER = "11014" # 분기보고서
     FOURTH_QUARTER = "11011" # 사업보고서
 
+class ResponseStatus(Enum):
+    SUCCESS = '000'
+    FAIL_NO_DATA = '013'
+
 class TreasuryStock:
     DEFAULT_TIMEOUT = 5000
-    NO_DATA_STATUS = '013'
-    REQEUST_SUCCESS_MESSAGE = '정상'
     file_name = '자기주식데이터.xlsx'
 
     def __init__(self):
@@ -46,6 +48,7 @@ class TreasuryStock:
         page_no = 1 # 페이지 번호
         page_count = 100 # 페이지 별 건수
         start_date = self.__get_date() # 검색 시작일
+        # start_date = 20240410
         end_date = self.__get_date() # 검색 종료일
         major_info_report ='B001' # 주요사항 보고서
         
@@ -73,11 +76,11 @@ class TreasuryStock:
             except requests.exceptions.RequestException as e: # 모든 exception의 기본 class
                 print("GET - Error occurred ", e)
 
-            if(results['status'] == self.NO_DATA_STATUS):
+            if(results['status'] == ResponseStatus.FAIL_NO_DATA.value):
                 print("해당 기간에 공시가 존재하지 않습니다.")
                 return None
-            if(results['message'] != self.REQEUST_SUCCESS_MESSAGE):
-                print("비정상적 데이터를 받았습니다. 전달 인자 등을 확인하세요", results['message'])
+            elif(results['status'] != ResponseStatus.SUCCESS.value):
+                print("비정상적 데이터를 받았습니다. 전달 인자 등을 확인하세요. message: ", results['message'])
                 return None
 
             # 결과 중 실제 공시 정보가 있는 부분만 DataFrame으로 저장
@@ -276,35 +279,22 @@ class TreasuryStock:
             # 바뀐 데이터 할당
             self.overview_data = overview_data.set_index('rcept_no')
 
-    def __get_floating_stock_rate(self, overview_data):
+    def __get_floating_stock_rate(self, overview_data: pd.DataFrame):
+        isSettlementMonth: bool = len(latest_report_code_list) >= 2 # 결산월 3,6,9,12월에 2개 보고서 확인
         latest_report_code_list = self.__get_latest_report_code()
         floating_stock_data_all = pd.DataFrame()
         
         for _, company_overview_data in overview_data.iterrows():
-
-            url = "https://opendart.fss.or.kr/api/mrhlSttus.json"
-            params =  {
-                'crtfc_key': DART_API_KEY,
-                'corp_code': company_overview_data['corp_code'],
-                'bsns_year': self.get_latest_report_business_year(latest_report_code_list[0]), # 사업 연도
-                'reprt_code': latest_report_code_list[0].value, # 보고서 코드 
-            }
-
-            try:
-                floating_stock_data = requests.get(url, params = params, timeout = self.DEFAULT_TIMEOUT).json()
-            except requests.exceptions.HTTPError as e:
-                print("GET - Http Error occurred ", e)
-            except requests.exceptions.Timeout as e:
-                print("GET - Timeout error occurred ", e)
-            except requests.exceptions.RequestException as e:
-                print("GET - Error occurred ", e)
-
-        
-            # TODO: 3, 6, 9, 12월에 해당 데이터 없을 경우 예외처리
+            floating_stock_data = self.__fetch_data(company_overview_data, latest_report_code_list[0])
+            # 3, 6, 9, 12월 예외처리
+            if floating_stock_data["status"] == ResponseStatus.FAIL_NO_DATA.value and isSettlementMonth:
+                floating_stock_data = self.__fetch_data(company_overview_data, latest_report_code_list[1])
+            
+            if floating_stock_data["status"] != ResponseStatus.SUCCESS.value:
+                print('소액주주 현황 데이터가 존재하지 않습니다. message:', floating_stock_data["message"])
+                return None
 
             floating_stock_data = pd.DataFrame(floating_stock_data['list'])
-            # print("floating_stock_data", floating_stock_data[['hold_stock_co']])
-            
             floating_stock_data_all = pd.concat([floating_stock_data_all, floating_stock_data])
         """
         - corp_code: 고유번호
@@ -316,6 +306,24 @@ class TreasuryStock:
         """
         return floating_stock_data_all[['rcept_no', 'corp_code', 'corp_name', 'se', 'hold_stock_co','hold_stock_rate']]
 
+    def __fetch_data(self, company_overview_data, latest_report_code: BusinessReportKind) -> dict:
+        new_floating_stock_data: dict
+        url = "https://opendart.fss.or.kr/api/mrhlSttus.json"
+        params =  {
+            'crtfc_key': DART_API_KEY,
+            'corp_code': company_overview_data['corp_code'],
+            'bsns_year': self.get_latest_report_business_year(latest_report_code), # 사업 연도
+            'reprt_code': latest_report_code.value, # 보고서 코드 
+        }
+        try:
+            new_floating_stock_data = requests.get(url, params = params, timeout = self.DEFAULT_TIMEOUT).json()
+        except requests.exceptions.HTTPError as e:
+            print("GET - Http Error occurred ", e)
+        except requests.exceptions.Timeout as e:
+            print("GET - Timeout error occurred ", e)
+        except requests.exceptions.RequestException as e:
+            print("GET - Error occurred ", e)
+        return new_floating_stock_data
 
     # TODO: 리팩토링
     # 정기 보고서의 종류를 결정하기 위한 함수
@@ -341,6 +349,9 @@ class TreasuryStock:
         return report_code
     
     def get_latest_report_business_year(self, report_code) -> int:
+        if not isinstance(report_code, BusinessReportKind):
+            print("리포트 코드를 확인하세요")
+            return -1
         month = datetime.now().month
         if month < 6 or (month == 6 and report_code == BusinessReportKind.FOURTH_QUARTER):
             return datetime.now().year - 1
