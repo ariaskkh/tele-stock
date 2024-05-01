@@ -29,7 +29,7 @@ class TreasuryStock:
             return None
         return self.total_data
     
-    def get_stock_tele_messages(self):
+    def get_stock_tele_messages(self) -> list:
         return self.__get_tele_message_form()
     
     def __get_data(self):
@@ -48,7 +48,7 @@ class TreasuryStock:
         page_no = 1 # 페이지 번호
         page_count = 100 # 페이지 별 건수
         start_date = self.__get_date() # 검색 시작일
-        # start_date = 20240410
+        # start_date = 20240427
         end_date = self.__get_date() # 검색 종료일
         major_info_report ='B001' # 주요사항 보고서
         
@@ -191,7 +191,7 @@ class TreasuryStock:
     종료일 : 2024-09-20
     http://dart.fss.or.kr/dsaf001/main.do?rcpNo=report_number
     """
-    def __get_tele_message_form(self):
+    def __get_tele_message_form(self) -> list:
         if (self.total_data is None):
             print("메세지가 없습니다")
             return None
@@ -201,10 +201,12 @@ class TreasuryStock:
             corp_name = stock['corp_name']
             stock_code = stock['stock_code']
             report_name = stock['report_nm']
-            if (stock['aqpln_prc_ostk'] != '-'): # 보통주식
+            if stock['aqpln_prc_ostk'] != '-': # 보통주식
                 expected_achieve_money = round(int(stock['aqpln_prc_ostk'].replace(',', '')) / 100000000)
-            else: # 기타주식
+            elif (stock['aqpln_prc_estk'] != '-'): # 기타주식
                 expected_achieve_money = round(int(stock['aqpln_prc_estk'].replace(',', '')) / 100000000)
+            else:
+                expected_achieve_money = '-'
             acquisition_stock_rate_of_floating = stock['acquisition_stock_rate_of_floating']
             acquisition_method = stock['aq_mth']
             acquisition_purpose = stock['aq_pp']
@@ -215,10 +217,13 @@ class TreasuryStock:
             # 텔레 노출 form
             result_str += f"{corp_name}({stock_code})\n"
             result_str += f"{report_name}\n\n"
+            # TODO: 금액 없는 경우 주식 수로 보여주기
             if (stock['aqpln_prc_ostk'] != '-'):
                 result_str += f"금액(원)): {expected_achieve_money} 억 (보통주식)\n"
-            else:
+            elif (stock['aqpln_prc_estk'] != '-'):
                 result_str += f"금액(원)): {expected_achieve_money} 억 (기타주식)\n"
+            else:
+                result_str += f"금액(원)): - (공시 미기재)\n"
             result_str += f"유동주식수대비(소액주주 기준): {acquisition_stock_rate_of_floating} %\n"
             result_str += f"취득방법: {acquisition_method}\n"
             result_str += f"취득목적: {acquisition_purpose}\n"
@@ -280,8 +285,8 @@ class TreasuryStock:
             self.overview_data = overview_data.set_index('rcept_no')
 
     def __get_floating_stock_rate(self, overview_data: pd.DataFrame):
-        isSettlementMonth: bool = len(latest_report_code_list) >= 2 # 결산월 3,6,9,12월에 2개 보고서 확인
         latest_report_code_list = self.__get_latest_report_code()
+        isSettlementMonth: bool = len(latest_report_code_list) >= 2 # 결산월 3,6,9,12월에 2개 보고서 확인
         floating_stock_data_all = pd.DataFrame()
         
         for _, company_overview_data in overview_data.iterrows():
