@@ -15,7 +15,7 @@ class TeleScheduler:
         # set up signal handler
         signal.signal(signal.SIGALRM, handler)
     
-    def is_working_hour(self) -> bool:
+    def __is_working_hour(self) -> bool:
         now = datetime.now().time()
         start_time = time(START_HOUR, START_MINUTE) # 9 am
         end_time = time(END_HOUR, END_MINUTE) # 3:30 pm
@@ -33,25 +33,25 @@ class TeleScheduler:
         # signum: identifier
         # frame: current stack frame. execution state를 나타내는 object
         def __alarm_handler(signum, frame) -> None:
-            if self.is_working_hour():
+            if self.__is_working_hour():
                 func(message)
                 signal.alarm(self.__repeat_time_for_check)
             else:
-                self.wait_until_start()
+                self.__wait_until_start()
         return __alarm_handler
 
     def start_alarm(self) -> None:
-        print("==== 장 시작 ====")
-        signal.alarm(self.__repeat_time_for_check)
+        if self.__is_working_hour():
+            print("==== 장 시작 ====")
+            signal.alarm(self.__repeat_time_for_check)
+        else:
+            print("==== 장 마감 후 sleep 중 ====\n")
+            self.__wait_until_start()
 
-    def wait_until_start(self) -> None:
-        print("==== 장 마감 후 sleep 중 ====\n")
-        time_left_for_start = self.__get_time_left_for_start()
-        # while not self.is_working_hour():
-        time.sleep(time_left_for_start)
-        if not self.is_working_hour():
-            self.wait_until_start()
+    def __wait_until_start(self) -> None:
+        time.sleep(self.__get_time_left_for_start())
         self.start_alarm()
+            
 
 
 ## 사용 예
