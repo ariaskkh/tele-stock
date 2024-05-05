@@ -1,28 +1,34 @@
-import time
 import signal
+import asyncio
 
-def targetFunction(message):
+async def targetFunction(message):
     print("CLOSER SUCCESS")
     print(message)
+    await asyncio.sleep(1)
 
 # Closer
-def signal_handler_factory(func, message, repeat_time):
+def signal_handler_factory(loop, func, message, repeat_time):
     print("signal_handler_factory")
     def signal_handler(signum, frame):
-        func(message)
+        asyncio.run_coroutine_threadsafe(func(message), loop)
         signal.alarm(repeat_time)
     return signal_handler
 
 def main():
     print("시작")
     repeat_time = 2
-    handler = signal_handler_factory(targetFunction, "전달된 메세지쓰", repeat_time)
+    loop = asyncio.get_event_loop()
+    handler = signal_handler_factory(loop, targetFunction, "전달된 메세지쓰", repeat_time)
     
     signal.signal(signal.SIGALRM, handler) # alarm 설정
     signal.alarm(repeat_time) # alarm 부르기
 
-    while True:
-        time.sleep(1)
+    try:
+        loop.run_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        loop.close()
 
 if __name__ == "__main__":
     main()
