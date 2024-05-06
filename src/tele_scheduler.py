@@ -1,5 +1,5 @@
 import signal
-import time
+import time as timer
 from datetime import datetime, time, timedelta
 import asyncio
 
@@ -51,5 +51,5 @@ class TeleScheduler:
             self.__wait_until_start()
 
     def __wait_until_start(self) -> None:
-        asyncio.sleep(self.__get_time_left_for_start())
+        timer.sleep(self.__get_time_left_for_start())
         self.start_alarm()
