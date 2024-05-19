@@ -6,7 +6,7 @@ async def targetFunction(message):
     print(message)
     await asyncio.sleep(1)
 
-# Closer
+# Closerwefw
 def signal_handler_factory(loop, func, message, repeat_time):
     print("signal_handler_factory")
     def signal_handler(signum, frame):
