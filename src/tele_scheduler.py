@@ -13,9 +13,11 @@ class TeleScheduler:
     __repeat_time_for_check = REPEAT_TIME_FOR_CHECK
 
     def __init__(self, loop, func, message = "") -> None:
-        handler = self.__alarm_handler_factory(loop, func, message)
+        self.loop = loop
+        self.func = func
+        self.message = message
         # set up signal handler
-        signal.signal(signal.SIGALRM, handler)
+        signal.signal(signal.SIGALRM, self.__alarm_handler)
     
     def __is_working_hour(self) -> bool:
         now = datetime.now().time()
@@ -30,17 +32,13 @@ class TeleScheduler:
         next_start_time = datetime(tomorrow.year, tomorrow.month, tomorrow.day, 9, 0)
         time_left_for_next_start: timedelta = next_start_time - now
         return time_left_for_next_start.total_seconds()
-
-    def __alarm_handler_factory(self, loop, func, params):
-        # signum: identifier
-        # frame: current stack frame. execution state를 나타내는 object
-        def __alarm_handler(signum, frame) -> None:
-            if self.__is_working_hour():
-                asyncio.run_coroutine_threadsafe(func(params), loop)
-                signal.alarm(self.__repeat_time_for_check)
-            else:
-                self.__wait_until_start()
-        return __alarm_handler
+    
+    def __alarm_handler(self, signum, frame) -> None:
+        if self.__is_working_hour():
+            asyncio.run_coroutine_threadsafe(self.func(self.message), self.loop)
+            signal.alarm(REPEAT_TIME_FOR_CHECK)
+        else:
+            self.__wait_until_start()
 
     def start_alarm(self) -> None:
         if self.__is_working_hour():
