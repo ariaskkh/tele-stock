@@ -1,20 +1,16 @@
 from private_data import TOKEN_ID, CHAT_ID
 import telegram
-from tele_scheduler import TeleScheduler
+from interval_executor import IntervalExecutor
 from treasury_stock_data import TreasuryStock
-import asyncio
 
 class TeleBot:
     treasury_stock: TreasuryStock
-    scheduler: TeleScheduler
+    intervalExecutor: IntervalExecutor
     
-    def __init__(self, loop) -> None:
+    def __init__(self) -> None:
         self.bot = telegram.Bot(token=TOKEN_ID)
-        self.scheduler = TeleScheduler(loop, self.__send_message)
-
-    def start_sending_message(self) -> None:
-        self.scheduler.start_alarm()
-
+        self.intervalExecutor = IntervalExecutor(self.__send_message)
+        
     async def __send_message(self, params = None) -> None:
         self.treasury_stock = TreasuryStock()
         treasury_stock_tele_message = self.__get_stock_tele_message()
@@ -24,20 +20,23 @@ class TeleBot:
 
     def __get_stock_tele_message(self) -> list:
         return self.treasury_stock.get_stock_tele_messages()
+    
+    def start(self) -> None:
+        self.intervalExecutor.start_alarm()
+        self.intervalExecutor.loop.run_forever()
+
+    def end(self) -> None: 
+        self.intervalExecutor.loop.close()
 
 def main():
     print("==== 프로그램 시작 !! ====")
-
-    loop = asyncio.get_event_loop()
-    telebot = TeleBot(loop)
-    telebot.start_sending_message()
+    telebot = TeleBot()
 
     try:
-        loop.run_forever()
+        telebot.start()
     except KeyboardInterrupt:
         print("==== 프로그램 종료 !! ====")
-    finally:
-        loop.close()
+        telebot.end()
 
 if __name__ == "__main__":
     main()

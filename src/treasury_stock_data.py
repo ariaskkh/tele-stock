@@ -34,6 +34,7 @@ class TreasuryStock:
     
     def __get_data(self):
         self.overview_data = self.__get_stock_overview()
+        print(self.overview_data)
         if(self.overview_data is None or not len(self.overview_data)):
             self.total_data =  None
             print("해당 조건의 공시 데이터가 존재하지 않습니다.")
@@ -47,8 +48,8 @@ class TreasuryStock:
     def __get_stock_overview(self):
         page_no = 1 # 페이지 번호
         page_count = 100 # 페이지 별 건수
-        start_date = self.__get_date() # 검색 시작일
-        # start_date = 20240427
+        # start_date = self.__get_date() # 검색s시작일
+        start_date = 20240510
         end_date = self.__get_date() # 검색 종료일
         major_info_report ='B001' # 주요사항 보고서
         
